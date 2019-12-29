@@ -1,6 +1,6 @@
 { stdenv, yarn2nix }:
 yarn2nix.mkYarnPackage rec {
-    name = "doenet-service";
+    name = "ross-api";
     src = ./.;
     packageJSON = ./package.json;
     yarnLock = ./yarn.lock;
@@ -9,15 +9,10 @@ yarn2nix.mkYarnPackage rec {
       NODE_ENV=production yarn run build
     '';
 
-    postInstall = ''
-      mkdir $out/dist
-      cp $src/src/iframe/iframe.js $out/dist
-    '';
-
     meta = with stdenv.lib; {
-      description = "Doenet web services";
+      description = "Ross Program web services";
       license = licenses.agpl3;
-      homepage = "https://github.com/doenet/service";
+      homepage = "https://github.com/rossprogram/api";
       maintainers = with maintainers; [ kisonecat ];
       platforms = platforms.linux;
     };

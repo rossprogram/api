@@ -7,8 +7,8 @@ look as follows for development.
 ```
 PORT=4000
 NODE_ENV=development
-        
-MONGODB_DATABASE=lrs
+
+MONGODB_DATABASE=ross
 MONGODB_PASS=thepassword
 MONGODB_USER=theuser
 MONGODB_HOST=localhost

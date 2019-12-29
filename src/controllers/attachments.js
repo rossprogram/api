@@ -3,17 +3,30 @@ import applicationModel from '../models/application';
 import attachmentModel from '../models/attachment';
 
 export function getById(req, res, next) {
-  attachmentModel.findById(req.params.id).exec((err, attachment) => {
+  attachmentModel.findById(req.params.id).populate('application').exec((err, attachment) => {
     if (err)
       res.status(500).send('Error fetching attachment data');
     else {
-      // FIXME
-      if (attachment.type)
-        res.setHeader("Content-Type",attachment.type);
-      if (attachment.name)
-        res.setHeader("Content-Dispositon",`attachment; filename=${attachment.name}`);
-      
-      res.send(attachment.data);
+      userModel.findById( attachment.application.user ).exec((err, user) => {
+        if (err)
+          res.status(500).send('Error fetching user for application');
+        else {
+          if (req.jwt && req.jwt.user) {
+            if (req.jwt.user.canView(user)) {
+              if (attachment.type)
+                res.setHeader("Content-Type",attachment.type);
+              if (attachment.name)
+                res.setHeader("Content-Dispositon",`attachment; filename=${attachment.name}`);
+              
+              res.send(attachment.data);
+            } else {
+              res.status(403).send('Not permitted to view attachment');              
+            }
+          } else {
+            res.status(401).send('Unauthenticated');            
+          }
+        }
+      });
     }
   });
 }
@@ -24,11 +37,14 @@ export function get(req, res, next) {
     application: req.application._id,
   };
 
-  attachmentModel.find(query, '-data').exec((err, attachments) => {
+  attachmentModel.find(query, '-data').populate('application').exec((err, attachments) => {
     if (err)
       res.status(500).send('Error fetching attachments');
-    else
+    else {
+      
+      
       res.json( attachments.map( (attachment) => attachment.toJSON() ) );
+    }
   });
 }
 

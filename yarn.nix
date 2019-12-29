@@ -570,6 +570,14 @@
       };
     }
     {
+      name = "_babel_polyfill___polyfill_7.7.0.tgz";
+      path = fetchurl {
+        name = "_babel_polyfill___polyfill_7.7.0.tgz";
+        url  = "https://registry.yarnpkg.com/@babel/polyfill/-/polyfill-7.7.0.tgz";
+        sha1 = "e1066e251e17606ec7908b05617f9b7f8180d8f3";
+      };
+    }
+    {
       name = "_babel_preset_env___preset_env_7.7.4.tgz";
       path = fetchurl {
         name = "_babel_preset_env___preset_env_7.7.4.tgz";
@@ -1583,6 +1591,14 @@
         name = "core_js_pure___core_js_pure_3.4.7.tgz";
         url  = "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.4.7.tgz";
         sha1 = "c998e1892da9949200c7452cbd33c0df95be9f54";
+      };
+    }
+    {
+      name = "core_js___core_js_2.6.11.tgz";
+      path = fetchurl {
+        name = "core_js___core_js_2.6.11.tgz";
+        url  = "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz";
+        sha1 = "38831469f9922bded8ee21c9dc46985e0399308c";
       };
     }
     {

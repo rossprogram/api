@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import "@babel/polyfill";
 import app from './app';
 import mongoose from './config/mongoose';
 

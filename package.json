@@ -1,7 +1,7 @@
 {
-  "name": "@doenet/service",
+  "name": "@rossprogram/backend",
   "version": "1.0.0",
-  "description": "Learner record store and page state store",
+  "description": "Ross Program application website",
   "main": "src/index.js",
   "bin": "dist/index.js",
   "scripts": {
@@ -26,13 +26,12 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "jsondiffpatch": "^0.3.11",
+    "express-fileupload": "^1.1.6",
+    "generate-password": "^1.4.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.6.0",
     "morgan": "^1.9.1",
-    "object-hash": "^2.0.1",
-    "redis": "^2.8.0",
-    "sha.js": "^2.4.11",
+    "nodemailer": "^6.4.2",
     "winston-loggly-bulk": "^3.0.1",
     "yarn-run-all": "^3.1.1"
   },

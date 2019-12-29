@@ -2,7 +2,6 @@
 
 import app from './app';
 import mongoose from './config/mongoose';
-import client from './config/redis';
 
 process.on('uncaughtException', (err, origin) => {
   console.log(err);

@@ -5,23 +5,17 @@ import cors from 'cors';
 import morgan from 'morgan';
 import router from './routes';
 
-import logger from './logger';
-
 const app = express();
 
 app.set('secretKey', process.env.SECRET);
 
-if (process.env.NODE_ENV == 'development') {
-  app.use(morgan('dev'));
-} else {
-  app.use(morgan('combined', { stream: logger.stream }));
-}
+app.use(morgan('dev'));
 
 const allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:4000',
-  'https://api.doenet.cloud',
-  'https://doenet.cloud'];
+  'https://apply.rossprogram.org',
+];
 
 const myCors = cors({
   credentials: true,

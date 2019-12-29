@@ -1,12 +1,18 @@
 import { model, Schema } from 'mongoose';
 
-const ProgressSchema = new Schema({
+const ApplicationSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
     index: true,
   },
+
+  year: {
+    type: Number,
+    required: true,
+  },
+
 
   worksheet: {
     type: String,
@@ -32,14 +38,13 @@ const ProgressSchema = new Schema({
 
 }, { timestamps: true });
 
-ProgressSchema.index({ user: 1, worksheet: 1 }, { unique: true });
+ApplicationSchema.index({ user: 1, year: 1 }, { unique: true });
 
-ProgressSchema.set('toJSON', {
+ApplicationSchema.set('toJSON', {
   transform(doc, ret, options) {
     delete ret._id;
     delete ret.__v;
   },
 });
 
-
-export default model('Progress', ProgressSchema);
+export default model('Application', ApplicationSchema);

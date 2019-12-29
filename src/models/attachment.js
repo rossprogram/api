@@ -34,7 +34,7 @@ AttachmentSchema.set('toJSON', {
   transform(doc, ret, options) {
     ret.id = ret._id;
     ret.url = `${API_BASE}attachments/${ret.id}`;
-    delete ret.document;
+    delete ret.data;
     delete ret._id;
     delete ret.__v;
   },

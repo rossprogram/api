@@ -20,9 +20,13 @@ const RecommendationSchema = new Schema({
     required: true,
   },
 
-  contentType: {
+  type: {
     type: String,
     trim: true,
+  },
+
+  name: {
+    type: String,
   },
 
   letter: {

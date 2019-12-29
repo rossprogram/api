@@ -75,38 +75,61 @@ export function getAll(req, res, next) {
   });
 }
 
-export function put(req, res, next) {
-  if (req.user) {
-    if (req.jwt && req.jwt.user) {
-      if (req.jwt.user.canEdit(req.user)) {
-        const query = {
-          user: req.user._id,
-          year: req.params.year,
-        };
-
-        const setter = {
-          $set: {
-          },
-        };
-
-        const fields = applicationModel.schema.eachPath((p) => {
-          if (p.match(/^[A-z]/)) {
-            if (req.body[p] !== undefined) setter.$set[p] = req.body[p];
-          }
-        });
-
-        applicationModel.findOneAndUpdate(query, setter,
-          { upsert: true, new: true }, (err, application) => {
-            if (err) return res.status(500).send('Error saving application');
-            return res.json(application.toJSON());
-          });
+export function get(req, res, next) {
+  recommendationModel.findById(req.params.id, '-letter').populate({ path: 'application', select: 'firstName nickname lastName' }).exec((err, recommendation) => {
+    if (err)
+      res.status(500).send('Error fetching recommendation letter data');
+    else {
+      if (recommendation) {
+        if (bcrypt.compareSync(req.params.password, recommendation.password)) {
+          res.status(200).json(recommendation.toJSON());
+        } else {
+          res.status(401).send('Invalid credentials');
+        }
       } else {
-        res.status(403).send('Not permitted to update application');
+        res.status(403).send('Could not find recommendation letter.');
       }
-    } else {
-      res.status(401).send('Unauthenticated');
     }
-  } else {
-    res.status(404).send('User not found');
-  }
+  });
+}
+
+export async function put(req, res, next) {
+  recommendationModel.findById(req.params.id, '-letter').exec((err, recommendation) => {
+    if (err)
+      res.status(500).send('Error fetching recommendation letter data');
+    else {
+      if (recommendation) {
+        if (bcrypt.compareSync(req.params.password, recommendation.password)) {
+          if (recommendation.submittedAt) {
+            res.status(401).send('Recommendation letter has already been submitted.');
+          } else {
+            if (req.files) {
+              if (req.files.file) {
+                recommendation.letter = req.files.file.data;
+                recommendation.type = req.files.file.mimetype;
+                recommendation.name = req.files.file.name;
+                recommendation.submittedAt = Date.now();
+                
+                recommendation.save(function (err, result) {
+                  if (err)
+                    res.status(500).send('Error saving recommendation letter');
+                  else
+                    res.json( result.toJSON() );
+                });
+                
+              } else {
+                res.status(500).send('Wrong name of file');
+              }
+            } else {
+              res.status(500).send('No file uploaded');
+            } 
+          }
+        } else {
+          res.status(401).send('Invalid credentials');
+        }
+      } else {
+        res.status(403).send('Could not find recommendation letter.');
+      }
+    }
+  });
 }

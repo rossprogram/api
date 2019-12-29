@@ -49,6 +49,10 @@ export function get(req, res, next) {
 }
 
 export function remove(req, res, next) {
+  if (req.application.submitted) {
+    return res.status(403).send('Not permitted to update an already submitted application.  Withdraw your application first.');    
+  }
+  
   const query = {
     application: req.application._id,
     _id: req.params.id
@@ -63,6 +67,10 @@ export function remove(req, res, next) {
 }
 
 export async function post(req, res, next) {
+  if (req.application.submitted) {
+    return res.status(403).send('Not permitted to update an already submitted application.  Withdraw your application first.');    
+  }
+  
   const query = {
     application: req.application._id,
   };

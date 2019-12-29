@@ -2218,6 +2218,14 @@
       };
     }
     {
+      name = "express_rate_limit___express_rate_limit_5.0.0.tgz";
+      path = fetchurl {
+        name = "express_rate_limit___express_rate_limit_5.0.0.tgz";
+        url  = "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-5.0.0.tgz";
+        sha1 = "9a6f4cacc388c1a1da7ba2f65db69f7395e9b04e";
+      };
+    }
+    {
       name = "express___express_4.17.1.tgz";
       path = fetchurl {
         name = "express___express_4.17.1.tgz";

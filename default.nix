@@ -1,6 +1,6 @@
 { stdenv, yarn2nix }:
 yarn2nix.mkYarnPackage rec {
-    name = "ross-api";
+    name = "rossprogram-api";
     src = ./.;
     packageJSON = ./package.json;
     yarnLock = ./yarn.lock;
@@ -10,7 +10,7 @@ yarn2nix.mkYarnPackage rec {
     '';
 
     meta = with stdenv.lib; {
-      description = "Ross Program web services";
+      description = "Ross Program webservices";
       license = licenses.agpl3;
       homepage = "https://github.com/rossprogram/api";
       maintainers = with maintainers; [ kisonecat ];

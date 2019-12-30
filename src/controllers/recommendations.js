@@ -63,16 +63,20 @@ export async function post(req, res, next) {
 }
 
 export function getAll(req, res, next) {
-  const query = {
-    application: req.application._id,
-  };
+  if (req.application) {
+    const query = {
+      application: req.application._id,
+    };
   
-  recommendationModel.find(query, '-letter').exec((err, recommendations) => {
-    if (err)
-      res.status(500).send('Error fetching recommendations');
-    else
-      res.json( recommendations.map( (recommendation) => recommendation.toJSON() ) );
-  });
+    recommendationModel.find(query, '-letter').exec((err, recommendations) => {
+      if (err)
+        res.status(500).send('Error fetching recommendations');
+      else
+        res.json( recommendations.map( (recommendation) => recommendation.toJSON() ) );
+    });
+  } else {
+    res.json( [] );
+  }
 }
 
 export function get(req, res, next) {

@@ -33,19 +33,21 @@ export function getById(req, res, next) {
 
 
 export function get(req, res, next) {
-  const query = {
-    application: req.application._id,
-  };
+  if (req.application) {
+    const query = {
+      application: req.application._id,
+    };
 
-  attachmentModel.find(query, '-data').populate('application').exec((err, attachments) => {
-    if (err)
-      res.status(500).send('Error fetching attachments');
-    else {
-      
-      
-      res.json( attachments.map( (attachment) => attachment.toJSON() ) );
-    }
-  });
+    attachmentModel.find(query, '-data').populate('application').exec((err, attachments) => {
+      if (err)
+        res.status(500).send('Error fetching attachments');
+      else {
+        res.json( attachments.map( (attachment) => attachment.toJSON() ) );
+      }
+    });
+  } else {
+    res.json( [] );
+  }
 }
 
 export function remove(req, res, next) {

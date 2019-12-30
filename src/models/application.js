@@ -70,7 +70,7 @@ const ApplicationSchema = new Schema({
     trim: true,
   },
 
-  schoolName: {
+  schoolAddress: {
     type: String,
     trim: true,
   },

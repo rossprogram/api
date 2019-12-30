@@ -46,9 +46,12 @@ export function put(req, res, next) {
         applicationModel.findOne(query, (err, oldApplication) => {
           if (err) return res.status(500).send('Error finding application');
 
-          if (oldApplication.submitted && req.body.submitted !== false) {
-            return res.status(403).send('Not permitted to update an already submitted application.  Withdraw your application first.');
+          if (oldApplication) {
+            if (oldApplication.submitted && req.body.submitted !== false) {
+              return res.status(403).send('Not permitted to update an already submitted application.  Withdraw your application first.');
+            }
           }
+          
           const setter = {
             $set: {
             },

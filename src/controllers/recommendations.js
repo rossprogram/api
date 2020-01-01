@@ -26,7 +26,7 @@ export async function post(req, res, next) {
                 };
 
   let applicantName = 'An applicant';
-  if (req.application.firstName) {
+  if (req.application && req.application.firstName) {
     applicantName = req.application.firstName;
     if (req.application.lastName)
       applicantName = `${applicantName} ${req.application.lastName}`;

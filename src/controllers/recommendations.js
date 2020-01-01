@@ -8,6 +8,11 @@ import generatePassword from 'generate-password';
 const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
 
 export async function post(req, res, next) {
+  if (req.application === undefined) {
+    res.status(500).send('Before adding a recomender, save your background information.');
+    return;
+  }
+  
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     host: SMTP_HOST,

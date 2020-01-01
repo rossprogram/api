@@ -10,7 +10,7 @@ export function find(req, res, next) {
           year: req.params.year,
         };
 
-        applicationModel.findOne(query).exec((err, application) => {
+        applicationModel.findOneAndUpdate(query, { }, { upsert: true, new: true }, (err, application) => {
           if (err) return res.status(500).send('Error fetching application');
           if (application) {
             req.application = application;
@@ -51,7 +51,7 @@ export function put(req, res, next) {
               return res.status(403).send('Not permitted to update an already submitted application.  Withdraw your application first.');
             }
           }
-          
+
           const setter = {
             $set: {
             },

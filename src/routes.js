@@ -19,13 +19,13 @@ router.use(apiLimiter);
 
 router.use(fileUpload());
 
-// const createAccountLimiter = rateLimit({
-//  windowMs: 15 * 60 * 1000, // 15 minute window
-//  max: 10, // start blocking after 10 requests
-//  message:
-//    'Too many accounts created from this IP; please try again later.',
-// });
-router.post('/users/:user', apiLimiter, userController.post);
+const createAccountLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minute window
+  max: 10, // start blocking after 10 requests
+  message:
+  'Too many accounts created from this IP; please try again later.',
+});
+router.post('/users/:user', createAccountLimiter, userController.post);
 
 // ## GET /users/:user/authorize
 //

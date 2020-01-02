@@ -9,6 +9,8 @@ const app = express();
 
 app.set('secretKey', process.env.SECRET);
 
+app.set('trust proxy', 1);
+
 app.use(morgan('dev'));
 
 const allowedOrigins = [

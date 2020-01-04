@@ -17,6 +17,7 @@ const allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:4000',
   'https://apply.rossprogram.org',
+  'https://evaluate.rossprogram.org',
   'https://recommend.rossprogram.org',
 ];
 

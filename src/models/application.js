@@ -172,6 +172,7 @@ ApplicationSchema.index({ user: 1, year: 1 }, { unique: true });
 
 ApplicationSchema.set('toJSON', {
   transform(doc, ret, options) {
+    ret.id = ret._id;
     delete ret._id;
     delete ret.__v;
   },

@@ -43,6 +43,11 @@ router.patch('/users/:user', userController.findUser, userController.put);
 router.get('/users/:user/application/:year', userController.findUser, applicationController.get);
 router.put('/users/:user/application/:year', userController.findUser, applicationController.put);
 
+router.get('/applications/:year/',
+  applicationController.getAll);
+router.get('/applications/:year/:id',
+  applicationController.getById);
+
 const recommendationLetterLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour window
   max: 5, // start blocking after 5 requests

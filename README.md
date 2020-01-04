@@ -1,5 +1,7 @@
 ## Running the server
 
+`db.users.update({email:"fowler@math.osu.edu"}, { $set: { isEvaluator: true } } )`
+
 To test this in a development environment, you should create a `.env`
 file for [dotenv](https://www.npmjs.com/package/dotenv).  This might
 look as follows for development.

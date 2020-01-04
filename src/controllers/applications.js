@@ -35,6 +35,45 @@ export function get(req, res, next) {
   });
 }
 
+export function getById(req, res, next) {
+  if (req.jwt && req.jwt.user) {
+    if (req.jwt.user.isEvaluator) {
+      const query = {
+        _id: req.params.id,
+        year: req.params.year,
+      };
+
+      applicationModel.findOne(query, { }, (err, application) => {
+        if (err) return res.status(500).send('Error fetching application');
+        res.json(application.toJSON());
+      });
+    } else {
+      res.status(403).send('Not permitted to view application by id');
+    }
+  } else {
+    res.status(401).send('Unauthenticated');
+  }
+}
+
+export function getAll(req, res, next) {
+  if (req.jwt && req.jwt.user) {
+    if (req.jwt.user.isEvaluator) {
+      const query = {
+        year: req.params.year,
+      };
+
+      applicationModel.find(query, 'updatedAt firstName nickname submitted submittedAt lastName', (err, applications) => {
+        if (err) return res.status(500).send('Error fetching applications');
+        res.json(applications.map((application) => application.toJSON()));
+      });
+    } else {
+      res.status(403).send('Not permitted to view applications');
+    }
+  } else {
+    res.status(401).send('Unauthenticated');
+  }
+}
+
 export function put(req, res, next) {
   if (req.user) {
     if (req.jwt && req.jwt.user) {

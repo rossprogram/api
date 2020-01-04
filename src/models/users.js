@@ -10,6 +10,11 @@ const UserSchema = new Schema({
     unique: true,
   },
 
+  isEvaluator: {
+    type: Boolean,
+    default: false,
+  },
+
   ipAddresses: {
     type: [String],
   },
@@ -25,6 +30,7 @@ const UserSchema = new Schema({
 UserSchema.index({ email: 1 });
 
 UserSchema.methods.canView = function (anotherUser) {
+  if (this.isEvaluator) return true;
   if (this._id.equals(anotherUser._id)) return true;
 
   return false;

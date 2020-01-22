@@ -56,6 +56,11 @@ const ApplicationSchema = new Schema({
     type: Boolean,
   },
 
+  juniorCounselor: {
+    type: Boolean,
+    default: false,
+  },
+
   toeflNarrative: {
     type: String,
   },
@@ -101,6 +106,18 @@ const ApplicationSchema = new Schema({
     type: String,
   },
 
+  previousExperience: {
+    type: String,
+  },
+
+  mostInterestingRoss: {
+    type: String,
+  },
+
+  mostInterestingMath: {
+    type: String,
+  },
+
   books: {
     type: String,
   },
@@ -130,6 +147,10 @@ const ApplicationSchema = new Schema({
   },
 
   previousApplicationYears: {
+    type: [Number],
+  },
+
+  previousParticipationYears: {
     type: [Number],
   },
 

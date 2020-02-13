@@ -5,8 +5,8 @@ import * as userController from './controllers/users';
 import * as applicationController from './controllers/applications';
 import * as recommendationController from './controllers/recommendations';
 import * as attachmentController from './controllers/attachments';
+import * as evaluationController from './controllers/evaluations';
 import identity from './middleware/identity';
-
 
 const router = express.Router();
 
@@ -47,6 +47,12 @@ router.get('/applications/:year/',
   applicationController.getAll);
 router.get('/applications/:year/:id',
   applicationController.getById);
+router.get('/applications/:year/:id/attachments',
+  applicationController.findById,
+  attachmentController.get);
+router.get('/applications/:year/:id/evaluations',
+  applicationController.findById,
+  evaluationController.get);
 
 const recommendationLetterLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour window
@@ -81,8 +87,23 @@ router.get('/users/:user/application/:year/attachments',
   applicationController.find,
   attachmentController.get);
 
+router.get('/users/:user/application/:year/evaluations',
+  userController.findUser,
+  applicationController.find,
+  evaluationController.get);
+
 router.get('/attachments/:id',
   attachmentController.getById);
+
+router.get('/evaluations/:id',
+  evaluationController.getById);
+router.delete('/evaluations/:id',
+  evaluationController.deleteById);
+
+router.put('/users/:user/application/:year/evaluations',
+  userController.findUser,
+  applicationController.find,
+  evaluationController.put);
 
 router.delete('/users/:user/application/:year/attachments/:id',
   userController.findUser,

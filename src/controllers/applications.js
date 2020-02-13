@@ -1,6 +1,28 @@
 import userModel from '../models/users';
 import applicationModel from '../models/application';
 
+function redactApplication(user, application) {
+  if (user.isEvaluator && !user.isSuperuser) {
+    application.firstName = '█████';
+    application.lastName = '█████';
+    application.nickname = '█████';
+    application.gender = '█████';
+    application.citizenship = ['██'];
+    application.parentName = '█████ █████';
+
+    application.parentEmail = '█████@█████.███';
+
+    application.phone = '██████████';
+    application.parentPhone = '██████████';
+    application.address = '██████████';
+    application.parentAddress = '██████████';
+    application.schoolName = '██████████';
+    application.schoolAddress = '██████████';
+  }
+
+  return application;
+}
+
 export function find(req, res, next) {
   if (req.user) {
     if (req.jwt && req.jwt.user) {
@@ -10,12 +32,22 @@ export function find(req, res, next) {
           year: req.params.year,
         };
 
-        applicationModel.findOneAndUpdate(query, { }, { upsert: true, new: true }, (err, application) => {
+        applicationModel.findOne(query).exec((err, application) => {
           if (err) return res.status(500).send('Error fetching application');
           if (application) {
             req.application = application;
+            redactApplication(req.jwt.user, req.application);
+            next();
+          } else {
+            applicationModel.findOneAndUpdate(query, { }, { upsert: true, new: true }, (err, application) => {
+              if (err) return res.status(500).send('Error fetching application');
+              if (application) {
+                req.application = application;
+                redactApplication(req.jwt.user, req.application);
+              }
+              next();
+            });
           }
-          next();
         });
       } else {
         res.status(403).send('Not permitted to view application');
@@ -28,6 +60,34 @@ export function find(req, res, next) {
   }
 }
 
+export function findById(req, res, next) {
+  if (req.jwt && req.jwt.user) {
+    const query = {
+      _id: req.params.id,
+      year: req.params.year,
+    };
+
+    applicationModel.findOne(query, { }, { upsert: true, new: true })
+      .populate('user')
+      .exec((err, application) => {
+        if (err) return res.status(500).send('Error fetching application');
+        if (application) {
+          if (req.jwt.user.canViewApplication(application)) {
+            req.application = application;
+            redactApplication(req.jwt.user, req.application);
+            next();
+          } else {
+            res.status(403).send('Not permitted to view application');
+          }
+        } else {
+          res.status(404).send('No application found');
+        }
+      });
+  } else {
+    res.status(401).send('Unauthenticated');
+  }
+}
+
 export function get(req, res, next) {
   find(req, res, () => {
     if (req.application) res.json(req.application.toJSON());
@@ -36,23 +96,10 @@ export function get(req, res, next) {
 }
 
 export function getById(req, res, next) {
-  if (req.jwt && req.jwt.user) {
-    if (req.jwt.user.isEvaluator) {
-      const query = {
-        _id: req.params.id,
-        year: req.params.year,
-      };
-
-      applicationModel.findOne(query, { }, (err, application) => {
-        if (err) return res.status(500).send('Error fetching application');
-        res.json(application.toJSON());
-      });
-    } else {
-      res.status(403).send('Not permitted to view application by id');
-    }
-  } else {
-    res.status(401).send('Unauthenticated');
-  }
+  findById(req, res, () => {
+    if (req.application) res.json(req.application.toJSON());
+    else res.json({});
+  });
 }
 
 export function getAll(req, res, next) {
@@ -62,10 +109,13 @@ export function getAll(req, res, next) {
         year: req.params.year,
       };
 
-      applicationModel.find(query, 'updatedAt firstName nickname submitted submittedAt lastName', (err, applications) => {
-        if (err) return res.status(500).send('Error fetching applications');
-        res.json(applications.map((application) => application.toJSON()));
-      });
+      applicationModel
+        .find(query, 'updatedAt firstName nickname submitted submittedAt lastName juniorCounselor')
+        .populate('evaluationCount')
+        .exec((err, applications) => {
+          if (err) return res.status(500).send('Error fetching applications');
+          res.json(applications.map((application) => redactApplication(req.jwt.user, application).toJSON()));
+        });
     } else {
       res.status(403).send('Not permitted to view applications');
     }

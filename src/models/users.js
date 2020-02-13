@@ -15,6 +15,11 @@ const UserSchema = new Schema({
     default: false,
   },
 
+  isSuperuser: {
+    type: Boolean,
+    default: false,
+  },
+
   ipAddresses: {
     type: [String],
   },
@@ -30,8 +35,33 @@ const UserSchema = new Schema({
 UserSchema.index({ email: 1 });
 
 UserSchema.methods.canView = function (anotherUser) {
+  if (this.isSuperuser) return true;
   if (this.isEvaluator) return true;
   if (this._id.equals(anotherUser._id)) return true;
+
+  return false;
+};
+
+UserSchema.methods.canViewApplication = function (application) {
+  if (this.isSuperuser) return true;
+  if (this.isEvaluator) return true;
+  if (this._id.equals(application.user._id)) return true;
+
+  return false;
+};
+
+UserSchema.methods.canViewEvaluation = function (evaluation) {
+  if (this.isSuperuser) return true;
+  if ((this.isEvaluator) && (this._id.equals(evaluation.evaluator))) return true;
+  if ((this.isEvaluator) && (this._id.equals(evaluation.evaluator._id))) return true;
+
+  return false;
+};
+
+UserSchema.methods.canViewAttachment = function (attachment) {
+  if (this.isSuperuser) return true;
+  if (this._id.equals(attachment.application.user._id)) return true;
+  if (this.isEvaluator && attachment.label && attachment.label.startsWith('solution')) return true;
 
   return false;
 };

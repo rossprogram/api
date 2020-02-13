@@ -187,13 +187,25 @@ const ApplicationSchema = new Schema({
     type: Date,
   },
 
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  toObject: { virtuals: true },
+  toJSON: { virtuals: true },
+});
+
+ApplicationSchema.virtual('evaluationCount', {
+  ref: 'Evaluation',
+  localField: '_id',
+  foreignField: 'application',
+  count: true,
+});
 
 ApplicationSchema.index({ user: 1, year: 1 }, { unique: true });
 
 ApplicationSchema.set('toJSON', {
   transform(doc, ret, options) {
     ret.id = ret._id;
+    ret.evaluationCount = doc.evaluationCount;
     delete ret._id;
     delete ret.__v;
   },

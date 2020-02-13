@@ -12,7 +12,7 @@ export function getById(req, res, next) {
           res.status(500).send('Error fetching user for application');
         else {
           if (req.jwt && req.jwt.user) {
-            if (req.jwt.user.canView(user)) {
+            if (req.jwt.user.canViewAttachment(attachment)) {
               if (attachment.type)
                 res.setHeader("Content-Type",attachment.type);
               if (attachment.name)
@@ -42,7 +42,13 @@ export function get(req, res, next) {
       if (err)
         res.status(500).send('Error fetching attachments');
       else {
-        res.json( attachments.map( (attachment) => attachment.toJSON() ) );
+        if (req.jwt && req.jwt.user) {
+          res.json( attachments
+                    .filter( (attachment) => req.jwt.user.canViewAttachment(attachment) )
+                    .map( (attachment) => attachment.toJSON() ) );
+        } else {
+          res.json( [] );
+        }
       }
     });
   } else {

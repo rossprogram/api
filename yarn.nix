@@ -3970,6 +3970,14 @@
       };
     }
     {
+      name = "mongodb___mongodb_3.4.1.tgz";
+      path = fetchurl {
+        name = "mongodb___mongodb_3.4.1.tgz";
+        url  = "https://registry.yarnpkg.com/mongodb/-/mongodb-3.4.1.tgz";
+        sha1 = "0d15e57e0ea0fc85b7a4fb9291b374c2e71652dc";
+      };
+    }
+    {
       name = "mongodb___mongodb_3.3.5.tgz";
       path = fetchurl {
         name = "mongodb___mongodb_3.3.5.tgz";
@@ -3986,11 +3994,11 @@
       };
     }
     {
-      name = "mongoose___mongoose_5.7.13.tgz";
+      name = "mongoose___mongoose_5.8.13.tgz";
       path = fetchurl {
-        name = "mongoose___mongoose_5.7.13.tgz";
-        url  = "https://registry.yarnpkg.com/mongoose/-/mongoose-5.7.13.tgz";
-        sha1 = "d8ebbc15cfb19d014cf1fbd4b7af413d75952d46";
+        name = "mongoose___mongoose_5.8.13.tgz";
+        url  = "https://registry.yarnpkg.com/mongoose/-/mongoose-5.8.13.tgz";
+        sha1 = "c4a7032940800b5c893e52ca3d0009ec7d13a296";
       };
     }
     {

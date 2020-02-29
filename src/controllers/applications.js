@@ -110,7 +110,7 @@ export function getAll(req, res, next) {
       };
 
       applicationModel
-        .find(query, 'updatedAt firstName nickname submitted submittedAt lastName juniorCounselor')
+        .find(query, 'updatedAt firstName nickname submitted submittedAt lastName citizenship gender birthday juniorCounselor')
         .populate('evaluationCount')
         .exec((err, applications) => {
           if (err) return res.status(500).send('Error fetching applications');

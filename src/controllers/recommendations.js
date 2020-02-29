@@ -142,3 +142,32 @@ export async function put(req, res, next) {
     }
   });
 }
+
+export function getById(req, res, next) {
+  recommendationModel.findById(req.params.id).populate('application').exec((err, recommendation) => {
+    if (err)
+      res.status(500).send('Error fetching recommendation data');
+    else {
+      userModel.findById( recommendation.application.user ).exec((err, user) => {
+        if (err)
+          res.status(500).send('Error fetching user for application');
+        else {
+          if (req.jwt && req.jwt.user) {
+            if (req.jwt.user.canViewRecommendation(recommendation)) {
+              if (recommendation.type)
+                res.setHeader("Content-Type",recommendation.type);
+              if (recommendation.name)
+                res.setHeader("Content-Dispositon",`recommendation; filename=${recommendation.name}`);
+              
+              res.send(recommendation.letter);
+            } else {
+              res.status(403).send('Not permitted to view recommendation');              
+            }
+          } else {
+            res.status(401).send('Unauthenticated');            
+          }
+        }
+      });
+    }
+  });
+}

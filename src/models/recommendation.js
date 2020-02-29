@@ -39,9 +39,12 @@ const RecommendationSchema = new Schema({
 
 }, { timestamps: true });
 
+const { API_BASE } = process.env;
+
 RecommendationSchema.set('toJSON', {
   transform(doc, ret, options) {
     ret.id = ret._id;
+    ret.url = `${API_BASE}recommendations/${ret.id}`;
     delete ret.letter;
     delete ret._id;
     delete ret.password;

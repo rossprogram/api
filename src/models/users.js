@@ -58,6 +58,13 @@ UserSchema.methods.canViewEvaluation = function (evaluation) {
   return false;
 };
 
+UserSchema.methods.canViewRecommendation = function (recommendation) {
+  if (this.isSuperuser) return true;
+  if (this.isEvaluator) return true;
+
+  return false;
+};
+
 UserSchema.methods.canViewAttachment = function (attachment) {
   if (this.isSuperuser) return true;
   if (this._id.equals(attachment.application.user._id)) return true;

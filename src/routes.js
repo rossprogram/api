@@ -53,6 +53,9 @@ router.get('/applications/:year/:id/attachments',
 router.get('/applications/:year/:id/evaluations',
   applicationController.findById,
   evaluationController.get);
+router.get('/applications/:year/:id/recommendations',
+  applicationController.findById,
+  recommendationController.getAll);
 
 const recommendationLetterLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour window
@@ -94,6 +97,9 @@ router.get('/users/:user/application/:year/evaluations',
 
 router.get('/attachments/:id',
   attachmentController.getById);
+
+router.get('/recommendations/:id',
+  recommendationController.getById);
 
 router.get('/evaluations/:id',
   evaluationController.getById);

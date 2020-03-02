@@ -95,6 +95,10 @@ router.get('/users/:user/application/:year/evaluations',
   applicationController.find,
   evaluationController.get);
 
+router.get('/evaluators/:user/evaluations',
+  userController.findUser,
+  evaluationController.getByUser);
+
 router.get('/attachments/:id',
   attachmentController.getById);
 

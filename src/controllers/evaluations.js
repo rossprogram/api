@@ -67,6 +67,30 @@ export function get(req, res, next) {
   }
 }
 
+export function getByUser(req, res, next) {
+  if (req.jwt && req.jwt.user) {
+    if (req.jwt.user.isEvaluator) {
+      const query = {
+        evaluator: req.jwt.user._id
+      };
+      
+      evaluationModel.find(query).exec((err, evaluations) => {
+        if (err)
+          res.status(500).send('Error fetching evaluations');
+        else {
+          res.json( evaluations
+                    .filter( (evaluation) => req.jwt.user.canViewEvaluation(evaluation) )
+                    .map( (evaluation) => evaluation.toJSON() ) );
+        }
+      });
+    } else {
+      res.status(403).send('Only evaluators may see evaluations');            
+    }
+  } else {
+    res.status(401).send('Unauthenticated');            
+  }
+}
+
 export async function put(req, res, next) {
   if (req.jwt && req.jwt.user) {
     if (req.jwt.user.isEvaluator) {

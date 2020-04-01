@@ -99,6 +99,9 @@ router.get('/users/:user/application/:year/evaluations',
   applicationController.find,
   evaluationController.get);
 
+router.get('/evaluators',
+  evaluationController.getEvaluators);
+
 router.get('/evaluators/:user/evaluations',
   userController.findUser,
   evaluationController.getByUser);
@@ -111,6 +114,7 @@ router.get('/recommendations/:id',
 
 router.get('/evaluations/:id',
   evaluationController.getById);
+
 router.delete('/evaluations/:id',
   evaluationController.deleteById);
 

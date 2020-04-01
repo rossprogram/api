@@ -69,22 +69,46 @@ export function get(req, res, next) {
 
 export function getByUser(req, res, next) {
   if (req.jwt && req.jwt.user) {
-    if (req.jwt.user.isEvaluator) {
-      const query = {
-        evaluator: req.jwt.user._id
-      };
+    if (req.user) {
+      if (req.jwt.user.isEvaluator) {
+        const query = {
+          evaluator: req.user._id
+        };
       
-      evaluationModel.find(query).exec((err, evaluations) => {
+        evaluationModel.find(query).populate('evaluator').exec((err, evaluations) => {
+          if (err)
+            res.status(500).send('Error fetching evaluations');
+          else {
+            res.json( evaluations
+                      .filter( (evaluation) => req.jwt.user.canViewEvaluation(evaluation) )
+                      .map( (evaluation) => evaluation.toJSON() ) );
+          }
+        });
+      } else {
+        res.status(403).send('Only evaluators may see evaluations');            
+      }
+    } else {
+      res.status(404).send('Missing user');            
+    }
+  } else {
+    res.status(401).send('Unauthenticated');            
+  }
+}
+
+export async function getEvaluators(req, res, next) {
+  if (req.jwt && req.jwt.user) {
+    if (req.jwt.user.isSuperuser) {
+      userModel.find({ isEvaluator: true }).exec((err, users) => {
         if (err)
-          res.status(500).send('Error fetching evaluations');
+          res.status(500).send('Error fetching evaluators');
         else {
-          res.json( evaluations
-                    .filter( (evaluation) => req.jwt.user.canViewEvaluation(evaluation) )
-                    .map( (evaluation) => evaluation.toJSON() ) );
+          res.json( users
+                    .filter( (user) => req.jwt.user.canView(user) )
+                    .map( (user) => user.toJSON() ) );
         }
       });
     } else {
-      res.status(403).send('Only evaluators may see evaluations');            
+      res.status(403).send('Only superusers may view the evaluation committee');            
     }
   } else {
     res.status(401).send('Unauthenticated');            

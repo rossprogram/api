@@ -31,6 +31,13 @@ const UserSchema = new Schema({
   },
 }, { timestamps: true });
 
+UserSchema.virtual('evaluationCount', {
+  ref: 'Evaluation',
+  localField: '_id',
+  foreignField: 'evaluator',
+  count: true,
+});
+
 // because we permit user look-ups based on email
 UserSchema.index({ email: 1 });
 
@@ -82,6 +89,7 @@ UserSchema.methods.canEdit = function (anotherUser) {
 UserSchema.set('toJSON', {
   transform(doc, ret, options) {
     ret.id = ret._id;
+    ret.evaluationCount = doc.evaluationCount;
     delete ret._id;
     delete ret.__v;
     delete ret.password;

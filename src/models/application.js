@@ -200,12 +200,20 @@ ApplicationSchema.virtual('evaluationCount', {
   count: true,
 });
 
+ApplicationSchema.virtual('offer', {
+  ref: 'Offer',
+  localField: '_id',
+  foreignField: 'application',
+  justOne: true,
+});
+
 ApplicationSchema.index({ user: 1, year: 1 }, { unique: true });
 
 ApplicationSchema.set('toJSON', {
   transform(doc, ret, options) {
     ret.id = ret._id;
     ret.evaluationCount = doc.evaluationCount;
+    ret.offer = doc.offer;
     delete ret._id;
     delete ret.__v;
   },

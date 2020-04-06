@@ -75,7 +75,7 @@ export function getByUser(req, res, next) {
           evaluator: req.user._id
         };
       
-        evaluationModel.find(query).populate('evaluator').exec((err, evaluations) => {
+        evaluationModel.find(query).populate('evaluator').populate('offer').exec((err, evaluations) => {
           if (err)
             res.status(500).send('Error fetching evaluations');
           else {
@@ -98,7 +98,7 @@ export function getByUser(req, res, next) {
 export async function getEvaluators(req, res, next) {
   if (req.jwt && req.jwt.user) {
     if (req.jwt.user.isSuperuser) {
-      userModel.find({ isEvaluator: true }).exec((err, users) => {
+      userModel.find({ isEvaluator: true }).populate('evaluationCount').exec((err, users) => {
         if (err)
           res.status(500).send('Error fetching evaluators');
         else {

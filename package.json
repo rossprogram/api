@@ -1,6 +1,6 @@
 {
   "name": "@rossprogram/api",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Ross Program webservices",
   "main": "src/index.js",
   "bin": "dist/index.js",

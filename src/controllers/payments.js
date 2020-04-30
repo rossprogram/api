@@ -1,8 +1,8 @@
 import userModel from '../models/users';
 import paymentModel from '../models/payment';
 import Stripe from 'stripe';
-const stripe = new Stripe(process.env.STRIPE_SECRET);
-const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
+const stripe = new Stripe(process.env.STRIPE_SECRET.trim());
+const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET.trim();
 
 function paymentIntentSucceeded(req, res, intent) {
   let query = {

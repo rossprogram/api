@@ -4,8 +4,6 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET);
 const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
 
-console.log(process.env.STRIPE_SECRET);
-
 function paymentIntentSucceeded(req, res, intent) {
   let query = {
     intent: intent.id

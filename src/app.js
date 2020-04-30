@@ -23,6 +23,7 @@ const allowedOrigins = [
 
 const myCors = cors({
   credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   origin(origin, callback) {
     if (!origin) return callback(null, true);
 
@@ -38,6 +39,7 @@ const myCors = cors({
 // preflight for all routes
 app.options('*', myCors);
 app.use(myCors);
+app.post(myCors);
 
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({

@@ -165,7 +165,7 @@ router.get('/users/:user/payments/:id',
   userController.findUser,
   paymentController.get);
 
-router.post('/users/:user/payments',
+router.post('/users/:user/payments/:amount',
   userController.findUser,
   paymentController.post);
 

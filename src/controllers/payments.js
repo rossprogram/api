@@ -152,10 +152,9 @@ export async function post(req, res, next) {
       if (req.jwt.user.canView(req.user)) {
         stripe.paymentIntents.create(
           {
-            amount: req.body.amount,
+            amount: req.params.amount,
             currency: 'usd',
             payment_method_types: ['card'],
-            description: req.body.description,
             metadata: {
               user: req.user._id.toString(),
               email: req.user.email,
@@ -168,8 +167,7 @@ export async function post(req, res, next) {
             } else {
               var payment = new paymentModel({
                 user: req.user._id,
-                description: req.body.description,
-                amount: req.body.amount,
+                amount: req.params.amount,
                 intent: paymentIntent.id
               });
 

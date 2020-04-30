@@ -166,7 +166,6 @@ export async function post(req, res, next) {
           },
           function(err, paymentIntent) {
             if (err) {
-              console.log(err);
               return res.status(500).send('Error creating payment intent');
             } else {
               var payment = new paymentModel({
@@ -178,10 +177,8 @@ export async function post(req, res, next) {
 
               payment.save(function (err) {
                 if (err) {
-                  console.log(err);
                   return res.status(500).send('Error saving payment');
                 }
-                console.log("client secret:",paymentIntent.client_secret);
                 return res.json( { clientSecret: paymentIntent.client_secret } );
               });
             }

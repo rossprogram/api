@@ -5,6 +5,7 @@ import * as userController from './controllers/users';
 import * as applicationController from './controllers/applications';
 import * as recommendationController from './controllers/recommendations';
 import * as attachmentController from './controllers/attachments';
+import * as paymentController from './controllers/payments';
 import * as evaluationController from './controllers/evaluations';
 import * as offerController from './controllers/offers';
 import identity from './middleware/identity';
@@ -152,5 +153,21 @@ router.get('/recommendations/:id/:password',
   recommendationController.get);
 router.put('/recommendations/:id/:password',
   recommendationController.put);
+
+router.post('/stripe',
+  paymentController.stripeWebhook);
+
+router.get('/users/:user/payments',
+  userController.findUser,
+  paymentController.getAll);
+
+router.get('/users/:user/payments/:id',
+  userController.findUser,
+  paymentController.get);
+
+router.post('/users/:user/payments',
+  userController.findUser,
+  paymentController.post);
+
 
 export default router;

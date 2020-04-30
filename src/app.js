@@ -40,7 +40,12 @@ app.options('*', myCors);
 app.use(myCors);
 
 // app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({ strict: false }));
+app.use(bodyParser.json({
+  strict: false,
+  verify: (req, res, buf) => {
+    req.rawBody = buf; // needed for stripe
+  },
+}));
 
 // cookies actually aren't used in light of CORS, but we do use them
 // in the tests.  Indeed, "Response to preflight request doesn't pass

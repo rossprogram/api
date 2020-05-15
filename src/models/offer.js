@@ -35,6 +35,28 @@ const OfferSchema = new Schema({
     enum: ['', 'usa', 'asia'],
   },
 
+  // / the following is only relevant for the 2020 program
+
+  timezone: {
+    type: String,
+  },
+
+  timezoneOffset: {
+    type: Number,
+  },
+
+  summerLocation: {
+    type: String,
+  },
+
+  possibleUsernames: {
+    type: String,
+  },
+
+  goodTimes: {
+    type: [String],
+  },
+
 }, { timestamps: true });
 
 OfferSchema.set('toJSON', {

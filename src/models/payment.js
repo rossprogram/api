@@ -30,6 +30,10 @@ const PaymentSchema = new Schema({
     type: Boolean,
   },
 
+  scholarship: {
+    type: Boolean,
+  },
+
   intent: {
     type: String,
     index: true,

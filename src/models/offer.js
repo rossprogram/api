@@ -50,11 +50,11 @@ const OfferSchema = new Schema({
   },
 
   possibleUsernames: {
-    type: String,
+    type: [String],
   },
 
   goodTimes: {
-    type: [String],
+    type: [Number],
   },
 
 }, { timestamps: true });

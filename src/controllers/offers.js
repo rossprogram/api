@@ -9,10 +9,40 @@ export async function put(req, res, next) {
     };
 
     let setter = { $set: { } };
-    
-    if (typeof req.body.decision === 'string') {
-      setter.$set.decision = req.body.decision;
 
+    let isApplicant = false;
+
+    if (typeof req.body.decision === 'string') {
+      isApplicant = true;
+      setter.$set.decision = req.body.decision;
+    }
+    
+    if (typeof req.body.timezone === 'string') {
+      isApplicant = true;
+      setter.$set.timezone = req.body.timezone;
+    }
+
+    if (typeof req.body.timezoneOffset === 'number') {
+      isApplicant = true;
+      setter.$set.timezoneOffset = req.body.timezoneOffset;
+    }
+
+    if (typeof req.body.summerLocation === 'string') {
+      isApplicant = true;
+      setter.$set.summerLocation = req.body.summerLocation;
+    }
+
+    if (req.body.possibleUsernames) {
+      isApplicant = true;
+      setter.$set.possibleUsernames = req.body.possibleUsernames;
+    }
+
+    if (req.body.goodTimes) {
+      isApplicant = true;
+      setter.$set.goodTimes = req.body.goodTimes;
+    }        
+    
+    if (isApplicant) {
       if (typeof req.body.decisionDate === 'string') {
         setter.$set.decisionDate = req.body.decisionDate;
       }

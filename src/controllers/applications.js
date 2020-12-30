@@ -1,6 +1,9 @@
 import crypto from 'crypto';
 import userModel from '../models/users';
 import applicationModel from '../models/application';
+import nodemailer from 'nodemailer';
+
+const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
 
 const prepositions = ['aboard', 'about', 'above', 'across', 'after', 'against', 'along', 'alongside', 'amid', 'around', 'as', 'at', 'before', 'behind', 'below', 'beneath', 'beside', 'besides', 'between', 'beyond', 'by', 'despite', 'down', 'during', 'except', 'from', 'into', 'less', 'like', 'near', 'nearer', 'of', 'off', 'on', 'onto', 'opposite', 'outside', 'over', 'past', 'through', 'throughout', 'to', 'toward', 'towards', 'under', 'underneath', 'unlike', 'until', 'up', 'upon', 'upside', 'versus', 'via', 'with', 'within', 'without', 'according to', 'adjacent to', 'ahead of', 'apart from', 'as for', 'as of', 'as per', 'as regards', 'aside from', 'back to', 'because of', 'close to', 'due to', 'except for', 'far from', 'inside of', 'instead of', 'left of', 'near to', 'next to', 'opposite of', 'opposite to', 'out from', 'out of', 'outside of', 'owing to', 'prior to', 'pursuant to', 'rather than', 'regardless of', 'right of', 'subsequent to', 'such as', 'thanks to', 'up to', 'as far as', 'as opposed to', 'as soon as', 'as well as'];
 
@@ -200,16 +203,46 @@ export function put(req, res, next) {
             }
           });
 
+          let shouldSendEmail = false;
+
           if (req.body.submitted !== undefined) {
             setter.$set.submitted = req.body.submitted;
             if (req.body.submitted === true) {
               setter.$set.submittedAt = Date.now();
+              shouldSendEmail = true;
             }
           }
 
           applicationModel.findOneAndUpdate(query, setter,
             { upsert: true, new: true }, (err, application) => {
               if (err) return res.status(500).send('Error saving application');
+
+              if (shouldSendEmail) {
+                // create reusable transporter object using the default SMTP transport
+                const transporter = nodemailer.createTransport({
+                  host: SMTP_HOST,
+                  port: SMTP_PORT,
+                  secure: true,
+                  auth: {
+                    user: SMTP_USER,
+                    pass: SMTP_PASS,
+                  },
+                });
+
+                // send mail with defined transport object
+                transporter.sendMail({
+                  from: 'The Ross Mathematics Program <ross@rossprogram.org>',
+                  to: req.user.email,
+                  subject: "Your application has been received and appears complete",
+                  text: `Dear ${application.firstName},\n\nYour application to the Ross Mathematics Program has been submitted successfully and appears complete.\n\nYou may view (but not change) your submitted materials by visiting the application website, and there you may find out whether your recommendation letter has been received.  The red "Withdraw your Application" button allows you to undo your submission.  All materials you typed and uploaded will remain, allowing you to edit those materials as you choose. Then you may click "Submit your Application" as before to resubmit.\n\nThe Ross Mathematics Program</p>`, // plain text body
+                  html: `<p>Dear ${application.firstName},</p><p>Your application to the Ross Mathematics Program has been submitted successfully and appears complete.</p><p>You may view (but not change) your submitted materials by visiting the application website, and there you may find out whether your recommendation letter has been received.  The red &ldquo;Withdraw your Application&rdquo; button allows you to undo your submission.  All materials you typed and uploaded will remain, allowing you to edit those materials as you choose. Then you may click &ldquo;Submit your Application&rdquo; as before to resubmit.</p><p>The Ross Mathematics Program</p>`, // html body
+                })
+                  .then( () => {
+                  })
+                  .catch( (err) => {
+                  });
+              }
+
               return res.json(application.toJSON());
             });
         });

@@ -54,8 +54,8 @@ export async function post(req, res, next) {
                                    from: 'The Ross Mathematics Program <ross@rossprogram.org>',
                                    to: email,
                                    subject: "Recommendation letter requested for the Ross Program",
-                                   text: `Dear recommender,\n\n${applicantName} has requested you write a recommendation letter to the Ross Mathematics Program on their behalf.\n\nPlease go to\n\n  ${theUrl}\n\nto submit your letter.\n\nPlease submit the recommendation within a week of receiving the request.  If more time is needed, note that the Ross Admissions Committee will start making acceptance decisions in March.  All application windows will close on March 31.\n\nThank you for your time; your expert feedback enables us to better evaluate candidates for the Program.\n\nThe Ross Mathematics Program`, // plain text body
-                                   html: `<p>Dear recommender,</p><p>${applicantName} has requested you write a recommendation letter to the Ross Mathematics Program on their behalf.</p><p>Please go to\n\n  <a href="${theUrl}">${theUrl}</a> to submit your letter.</p><p>Please submit the recommendation within a week of receiving the request.  If more time is needed, note that the Ross Admissions Committee will start making acceptance decisions in March.  All application windows will close on March 31.</p><p>Thank you for your time; your expert feedback enables us to better evaluate candidates for the Program.</p><p>The Ross Mathematics Program</p>` // html body
+                                   text: `Dear recommender,\n\n${applicantName} has requested you write a recommendation letter to the Ross Mathematics Program on their behalf.\n\nPlease talk to the student to verify that they are applying to the Ross Program, and then go to\n\n  ${theUrl}\n\nto submit your letter as a PDF.\n\nPlease submit the recommendation within a week of receiving the request.  If more time is needed, note that the Ross Admissions Committee will start making acceptance decisions in April.  All application windows will close on March 31.\n\nThank you for your time; your expert feedback enables us to better evaluate candidates for the Program.\n\nThe Ross Mathematics Program`, // plain text body
+                                   html: `<p>Dear recommender,</p><p>${applicantName} has requested you write a recommendation letter to the Ross Mathematics Program on their behalf.</p><p>Please talk to the student to verify that they are applying to the Ross Program, and then go to <a href="${theUrl}">${theUrl}</a> to submit your letter as a PDF.</p><p>Please submit the recommendation within a week of receiving the request.  If more time is needed, note that the Ross Admissions Committee will start making acceptance decisions in April.  All application windows will close on March 31.</p><p>Thank you for your time; your expert feedback enables us to better evaluate candidates for the Program.</p><p>The Ross Mathematics Program</p>` // html body
                                  })
                                    .then( () => {
                                      res.json(recommendation.toJSON());
@@ -103,6 +103,17 @@ export function get(req, res, next) {
 }
 
 export async function put(req, res, next) {
+  // create reusable transporter object using the default SMTP transport
+  let transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: true,    
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASS
+    }
+  });
+  
   recommendationModel.findById(req.params.id, '-letter').exec((err, recommendation) => {
     if (err)
       res.status(500).send('Error fetching recommendation letter data');
@@ -122,8 +133,21 @@ export async function put(req, res, next) {
                 recommendation.save(function (err, result) {
                   if (err)
                     res.status(500).send('Error saving recommendation letter');
-                  else
+                  else {
                     res.json( result.toJSON() );
+                    // send mail with defined transport object
+                    transporter.sendMail({
+                      from: 'The Ross Mathematics Program <ross@rossprogram.org>',
+                      to: email,
+                      subject: "Your recommendation letter has been received",
+                      text: `Dear recommender,\n\nYour recommendation letter to the Ross Program has been received.\n\nThank you for your time.  Your expert feedback enables us to evaluate candidates for the Program.\n\nSincerely,\nThe Ross Mathematics Program`, // plain text body
+                      html: `<p>Dear recommender,</p><p>Your recommendation letter to the Ross Program has been received.</p><p>Thank you for your time.  Your expert feedback enables us to evaluate candidates for the Program.</p><p>Sincerely,<br/>The Ross Mathematics Program</p>` // html body
+                    })
+                      .then( () => {
+                      })
+                      .catch( (err) => {
+                      });
+                  }
                 });
                 
               } else {

@@ -80,7 +80,7 @@ export function put(req, res, next) {
 const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
 
 export async function post(req, res, next) {
-  
+
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     host: SMTP_HOST,
@@ -89,7 +89,7 @@ export async function post(req, res, next) {
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS
-    }
+    },
   });
 
   let email = req.params.user;
@@ -115,6 +115,7 @@ export async function post(req, res, next) {
                                  res.json(user.toJSON());
                                } )
                                  .catch( (err) => {
+                                   console.log(err);
                                    res.status(500).send(err);
                                  });
                              });
@@ -157,3 +158,4 @@ export function authorize(req, res, next) {
     }
   });
 }
+

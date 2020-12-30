@@ -90,6 +90,11 @@ const ApplicationSchema = new Schema({
     trim: true,
   },
 
+  pronouns: {
+    type: String,
+    trim: true,
+  },  
+
   interestingProblem: {
     type: String,
   },

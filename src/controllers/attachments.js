@@ -15,8 +15,10 @@ export function getById(req, res, next) {
             if (req.jwt.user.canViewAttachment(attachment)) {
               if (attachment.type)
                 res.setHeader("Content-Type",attachment.type);
-              if (attachment.name)
-                res.setHeader("Content-Dispositon",`attachment; filename=${attachment.name}`);
+              if (attachment.name) {
+                let cleanName = attachment.name.replace(/[^\x00-\x7F]/g, "");
+                res.setHeader("Content-Dispositon",`attachment; filename=${cleanName}`);
+              }
               
               res.send(attachment.data);
             } else {

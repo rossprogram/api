@@ -7,7 +7,7 @@
   "scripts": {
     "test": "nyc mocha --exit --require @babel/register test",
     "start": "npm run production",
-    "server": "babel-node -r node_modules/dotenv/config ./src/index",
+    "server": "babel-node -r ./node_modules/dotenv/config ./src/index",
     "serve": "NODE_ENV=development npm-run-all server",
     "clean": "rimraf dist",
     "build": "babel ./src --out-dir dist",
@@ -33,7 +33,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.8.13",
     "morgan": "^1.9.1",
-    "nodemailer": "^6.4.2",
+    "nodemailer": "^6.7.2",
     "stripe": "^8.48.0",
     "winston-loggly-bulk": "^3.0.1",
     "yarn-run-all": "^3.1.1"

@@ -80,12 +80,11 @@ export function put(req, res, next) {
 const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
 
 export async function post(req, res, next) {
-
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     host: SMTP_HOST,
     port: SMTP_PORT,
-    secure: true,
+    secure: SMTP_HOST != 'smtp.mailtrap.io',
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS
@@ -153,7 +152,7 @@ export function authorize(req, res, next) {
     if (err) res.status(500).send('Could not generate JWT');
     // express records maxAge in milliseconds to be consistent with javascript mroe generally
     else {
-      res.cookie('token', token, { maxAge: 604800000, httpOnly: true });
+      res.cookie('token', token, { maxAge: 604800000, httpOnly: true, secure: true });
       res.json(req.user.toJSON());
     }
   });

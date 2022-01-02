@@ -1,4 +1,4 @@
-{ stdenv, yarn2nix }:
+{ lib, yarn2nix }:
 yarn2nix.mkYarnPackage rec {
     name = "rossprogram-api";
     src = ./.;
@@ -9,7 +9,7 @@ yarn2nix.mkYarnPackage rec {
       NODE_ENV=production yarn run build
     '';
 
-    meta = with stdenv.lib; {
+    meta = with lib; {
       description = "Ross Program webservices";
       license = licenses.agpl3;
       homepage = "https://github.com/rossprogram/api";

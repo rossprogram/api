@@ -32,7 +32,7 @@ const OfferSchema = new Schema({
 
   location: {
     type: String,
-    enum: ['', 'usa', 'asia'],
+    enum: ['', 'ohio', 'indiana'],
   },
 
   // / the following is only relevant for the 2020 program

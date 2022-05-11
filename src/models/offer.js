@@ -55,6 +55,9 @@ const OfferSchema = new Schema({
   flightNumber: {
     type: String,
   },
+  travelPlan: {
+    type: String,
+  },
 
   // / the following is only relevant for the 2020 program
 

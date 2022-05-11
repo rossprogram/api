@@ -35,6 +35,27 @@ const OfferSchema = new Schema({
     enum: ['', 'ohio', 'indiana'],
   },
 
+  travelMethod: {
+    type: String,
+    enum: ['', 'driving', 'flying'],
+  },
+
+  arrivalDate: {
+    type: String,
+  },
+
+  arrivalTime: {
+    type: String,
+  },
+
+  flightCarrier: {
+    type: String,
+  },
+
+  flightNumber: {
+    type: String,
+  },
+
   // / the following is only relevant for the 2020 program
 
   timezone: {

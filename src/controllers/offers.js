@@ -22,6 +22,27 @@ export async function put(req, res, next) {
       setter.$set.timezone = req.body.timezone;
     }
 
+    if (typeof req.body.travelMethod === 'string') {
+      isApplicant = true;
+      setter.$set.travelMethod = req.body.travelMethod;
+    }
+    if (typeof req.body.arrivalDate === 'string') {
+      isApplicant = true;
+      setter.$set.arrivalDate = req.body.arrivalDate;
+    }
+    if (typeof req.body.arrivalTime === 'string') {
+      isApplicant = true;
+      setter.$set.arrivalTime = req.body.arrivalTime;
+    }
+    if (typeof req.body.flightCarrier === 'string') {
+      isApplicant = true;
+      setter.$set.flightCarrier = req.body.flightCarrier;
+    }
+    if (typeof req.body.flightNumber === 'string') {
+      isApplicant = true;
+      setter.$set.flightNumber = req.body.flightNumber;
+    }
+
     if (typeof req.body.timezoneOffset === 'number') {
       isApplicant = true;
       setter.$set.timezoneOffset = req.body.timezoneOffset;

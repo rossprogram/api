@@ -42,6 +42,10 @@ export async function put(req, res, next) {
       isApplicant = true;
       setter.$set.flightNumber = req.body.flightNumber;
     }
+    if (typeof req.body.flightNumber === 'number') {
+      isApplicant = true;
+      setter.$set.flightNumber = req.body.flightNumber.toString();
+    }
     if (typeof req.body.travelPlan === 'string') {
       isApplicant = true;
       setter.$set.travelPlan = req.body.travelPlan ;

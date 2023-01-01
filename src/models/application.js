@@ -13,7 +13,11 @@ const ApplicationSchema = new Schema({
     required: true,
   },
 
-  applyingToUSA: {
+  applyingToOhio: {
+    type: Boolean,
+  },
+
+  applyingToIndiana: {
     type: Boolean,
   },
 
@@ -44,7 +48,11 @@ const ApplicationSchema = new Schema({
     type: String,
   },
 
-  arriveAtStartUSA: {
+  arriveAtStartOhio: {
+    type: Boolean,
+  },
+
+  arriveAtStartIndiana: {
     type: Boolean,
   },
 

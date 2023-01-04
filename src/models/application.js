@@ -192,6 +192,17 @@ const ApplicationSchema = new Schema({
     trim: true,
   },
 
+  eeoAmerindian:  {type: Boolean},
+  eeoAsian: {type: Boolean},
+  eeoBlack: {type: Boolean},
+  eeoHispanic: {type: Boolean},
+  eeoMideast: {type: Boolean},
+  eeoPacificIslander: {type: Boolean},
+  eeoWhite: {type: Boolean},
+  eeoPreferNotToAnswer: {type: Boolean},
+  eeoOther: {type: Boolean},
+  eeoOtherText: {type: String, trim: true},
+
   submitted: {
     type: Boolean,
   },

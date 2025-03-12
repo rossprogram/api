@@ -8,6 +8,7 @@ import * as attachmentController from './controllers/attachments';
 import * as paymentController from './controllers/payments';
 import * as evaluationController from './controllers/evaluations';
 import * as offerController from './controllers/offers';
+import * as comparisonController from './controllers/comparisons';
 import identity from './middleware/identity';
 
 const router = express.Router();
@@ -169,5 +170,7 @@ router.post('/users/:user/payments/:amount',
   userController.findUser,
   paymentController.post);
 
+router.post('/comparisons/problems/:problem/applications/:better/:worse',
+  comparisonController.post);
 
 export default router;

@@ -152,7 +152,14 @@ export function authorize(req, res, next) {
     if (err) res.status(500).send('Could not generate JWT');
     // express records maxAge in milliseconds to be consistent with javascript mroe generally
     else {
-      res.cookie('token', token, { maxAge: 604800000 * 4, httpOnly: true, secure: true });
+      res.cookie('token', token, { 
+        maxAge: 604800000 * 32,       // 32 weeks in milliseconds
+        httpOnly: true, 
+        secure: true,
+        domain: '.rossprogram.org',  // ensures cookie is shared across subdomains
+        sameSite: 'None',         // explicitly allow cross-site usage if needed
+        path: '/',                // default path
+      });
       res.json(req.user.toJSON());
     }
   });

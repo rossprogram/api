@@ -258,6 +258,10 @@ const ApplicationSchema = new Schema({
   //Introduction
   //This is free space for you to tell us about yourself! Introduce yourself to us: who are
   //you? (0-300 words)
+  introduction: {
+    type: String,
+  },
+
   personalStatement: {
     type: String,
     trim: true,

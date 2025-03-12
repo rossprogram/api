@@ -11,7 +11,6 @@ yarn2nix.mkYarnPackage rec {
 
     meta = with lib; {
       description = "Ross Program webservices";
-      license = licenses.agpl3;
       homepage = "https://github.com/rossprogram/api";
       maintainers = with maintainers; [ kisonecat ];
       platforms = platforms.linux;

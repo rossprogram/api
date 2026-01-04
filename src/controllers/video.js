@@ -8,8 +8,6 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import applicationModel from '../models/application';
-
 const { AWS_REGION, S3_VIDEO_BUCKET } = process.env;
 
 const s3 = new S3Client({ region: AWS_REGION });
@@ -29,24 +27,23 @@ function requireAuth(req, res) {
   return req.jwt.user;
 }
 
-function parseYear(req, res) {
-  const year = Number(req.body.year);
-  if (!Number.isInteger(year)) {
-    res.status(400).send('Missing or invalid year');
-    return null;
+function requireApplicant(req, res, user) {
+  if (!req.application) {
+    res.status(404).send('Application not found');
+    return false;
   }
-  return year;
+
+  if (!req.application.user.equals(user._id)) {
+    res.status(403).send('Only the applicant may manage the video upload');
+    return false;
+  }
+
+  return true;
 }
 
-async function findApplicationForUser(userId, year) {
-  const query = { user: userId, year };
-  const setter = { $setOnInsert: query };
-  return applicationModel.findOneAndUpdate(query, setter, { upsert: true, new: true });
-}
-
-function createObjectKey(userId) {
+function createObjectKey(userId, applicationId) {
   const suffix = crypto.randomBytes(16).toString('hex');
-  return `users/${userId}/recordings/${suffix}.webm`;
+  return `users/${userId}/applications/${applicationId}/recordings/${suffix}.webm`;
 }
 
 export async function createMultipartUpload(req, res, next) {
@@ -54,16 +51,14 @@ export async function createMultipartUpload(req, res, next) {
     const user = requireAuth(req, res);
     if (!user) return;
 
-    const year = parseYear(req, res);
-    if (!year) return;
+    if (!requireApplicant(req, res, user)) return;
 
-    const application = await findApplicationForUser(user._id, year);
-    if (application.submitted) {
+    if (req.application.submitted) {
       res.status(403).send('Not permitted to update an already submitted application. Withdraw your application first.');
       return;
     }
 
-    const key = createObjectKey(user._id);
+    const key = createObjectKey(user._id, req.application._id);
     const bucket = getBucket();
     const command = new CreateMultipartUploadCommand({
       Bucket: bucket,
@@ -73,7 +68,7 @@ export async function createMultipartUpload(req, res, next) {
 
     const response = await s3.send(command);
 
-    application.video = {
+    req.application.video = {
       key,
       bucket,
       uploadId: response.UploadId,
@@ -81,7 +76,7 @@ export async function createMultipartUpload(req, res, next) {
       createdAt: new Date(),
     };
 
-    await application.save();
+    await req.application.save();
 
     res.json({ uploadId: response.UploadId, key });
   } catch (err) {
@@ -94,6 +89,8 @@ export async function getMultipartPartUrl(req, res, next) {
     const user = requireAuth(req, res);
     if (!user) return;
 
+    if (!requireApplicant(req, res, user)) return;
+
     const { uploadId, key, partNumber } = req.body || {};
     const part = Number(partNumber);
     if (!uploadId || !key || !Number.isInteger(part) || part <= 0) {
@@ -101,13 +98,7 @@ export async function getMultipartPartUrl(req, res, next) {
       return;
     }
 
-    const application = await applicationModel.findOne({
-      user: user._id,
-      'video.key': key,
-      'video.uploadId': uploadId,
-    });
-
-    if (!application) {
+    if (!req.application || !req.application.video) {
       res.status(404).send('Upload not found');
       return;
     }
@@ -132,19 +123,15 @@ export async function completeMultipartUpload(req, res, next) {
     const user = requireAuth(req, res);
     if (!user) return;
 
+    if (!requireApplicant(req, res, user)) return;
+
     const { uploadId, key, parts } = req.body || {};
     if (!uploadId || !key || !Array.isArray(parts) || parts.length === 0) {
       res.status(400).send('Missing or invalid uploadId, key, or parts');
       return;
     }
 
-    const application = await applicationModel.findOne({
-      user: user._id,
-      'video.key': key,
-      'video.uploadId': uploadId,
-    });
-
-    if (!application) {
+    if (!req.application || !req.application.video) {
       res.status(404).send('Upload not found');
       return;
     }
@@ -166,14 +153,14 @@ export async function completeMultipartUpload(req, res, next) {
 
     const response = await s3.send(command);
 
-    application.video = {
-      ...application.video,
+    req.application.video = {
+      ...req.application.video,
       status: 'completed',
       completedAt: new Date(),
       etag: response.ETag,
     };
 
-    await application.save();
+    await req.application.save();
 
     res.json({
       bucket,
@@ -191,19 +178,15 @@ export async function abortMultipartUpload(req, res, next) {
     const user = requireAuth(req, res);
     if (!user) return;
 
+    if (!requireApplicant(req, res, user)) return;
+
     const { uploadId, key } = req.body || {};
     if (!uploadId || !key) {
       res.status(400).send('Missing uploadId or key');
       return;
     }
 
-    const application = await applicationModel.findOne({
-      user: user._id,
-      'video.key': key,
-      'video.uploadId': uploadId,
-    });
-
-    if (!application) {
+    if (!req.application || !req.application.video) {
       res.status(404).send('Upload not found');
       return;
     }
@@ -217,13 +200,13 @@ export async function abortMultipartUpload(req, res, next) {
 
     await s3.send(command);
 
-    application.video = {
-      ...application.video,
+    req.application.video = {
+      ...req.application.video,
       status: 'aborted',
       abortedAt: new Date(),
     };
 
-    await application.save();
+    await req.application.save();
 
     res.json({ aborted: true });
   } catch (err) {

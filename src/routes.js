@@ -63,9 +63,6 @@ router.get('/applications/:year/:id/recommendations',
 router.get('/applications/:year/:id/offer',
   applicationController.findById,
   offerController.get);
-router.get('/applications/:year/:id/video',
-  applicationController.findById,
-  videoController.getVideo);
 
 const recommendationLetterLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour window
@@ -177,13 +174,25 @@ router.post('/users/:user/payments/:amount',
 router.post('/comparisons/problems/:problem/applications/:better/:worse',
   comparisonController.post);
 
-router.post('/api/video/multipart/create',
+router.post('/users/:user/application/:year/video/multipart/create',
+  userController.findUser,
+  applicationController.find,
   videoController.createMultipartUpload);
-router.post('/api/video/multipart/part-url',
+router.post('/users/:user/application/:year/video/multipart/part-url',
+  userController.findUser,
+  applicationController.find,
   videoController.getMultipartPartUrl);
-router.post('/api/video/multipart/complete',
+router.post('/users/:user/application/:year/video/multipart/complete',
+  userController.findUser,
+  applicationController.find,
   videoController.completeMultipartUpload);
-router.post('/api/video/multipart/abort',
+router.post('/users/:user/application/:year/video/multipart/abort',
+  userController.findUser,
+  applicationController.find,
   videoController.abortMultipartUpload);
+router.get('/users/:user/application/:year/video',
+  userController.findUser,
+  applicationController.find,
+  videoController.getVideo);
 
 export default router;

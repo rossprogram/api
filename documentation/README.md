@@ -79,11 +79,11 @@ Notes:
 
 These endpoints create and manage an S3 multipart upload for applicant videos. The server stores upload metadata on the applicant's application.
 
-- `POST /api/video/multipart/create` create a multipart upload. Body: `{ year, contentType? }`. Returns `{ uploadId, key }`.
-- `POST /api/video/multipart/part-url` create a pre-signed UploadPart URL. Body: `{ uploadId, key, partNumber }`. Returns `{ url }`.
-- `POST /api/video/multipart/complete` complete the multipart upload. Body: `{ uploadId, key, parts: [{ PartNumber, ETag }] }`.
-- `POST /api/video/multipart/abort` abort the multipart upload. Body: `{ uploadId, key }`.
-- `GET /applications/:year/:id/video` return a pre-signed download URL for evaluators, superusers, or the applicant.
+- `POST /users/:user/application/:year/video/multipart/create` create a multipart upload. Body: `{ contentType? }`. Returns `{ uploadId, key }`.
+- `POST /users/:user/application/:year/video/multipart/part-url` create a pre-signed UploadPart URL. Body: `{ uploadId, key, partNumber }`. Returns `{ url }`.
+- `POST /users/:user/application/:year/video/multipart/complete` complete the multipart upload. Body: `{ uploadId, key, parts: [{ PartNumber, ETag }] }`.
+- `POST /users/:user/application/:year/video/multipart/abort` abort the multipart upload. Body: `{ uploadId, key }`.
+- `GET /users/:user/application/:year/video` return a pre-signed download URL for evaluators, superusers, or the applicant.
 
 Required environment:
 - `S3_VIDEO_BUCKET` (bucket name)

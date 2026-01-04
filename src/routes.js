@@ -9,6 +9,7 @@ import * as paymentController from './controllers/payments';
 import * as evaluationController from './controllers/evaluations';
 import * as offerController from './controllers/offers';
 import * as comparisonController from './controllers/comparisons';
+import * as videoController from './controllers/video';
 import identity from './middleware/identity';
 
 const router = express.Router();
@@ -62,6 +63,9 @@ router.get('/applications/:year/:id/recommendations',
 router.get('/applications/:year/:id/offer',
   applicationController.findById,
   offerController.get);
+router.get('/applications/:year/:id/video',
+  applicationController.findById,
+  videoController.getVideo);
 
 const recommendationLetterLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour window
@@ -172,5 +176,14 @@ router.post('/users/:user/payments/:amount',
 
 router.post('/comparisons/problems/:problem/applications/:better/:worse',
   comparisonController.post);
+
+router.post('/api/video/multipart/create',
+  videoController.createMultipartUpload);
+router.post('/api/video/multipart/part-url',
+  videoController.getMultipartPartUrl);
+router.post('/api/video/multipart/complete',
+  videoController.completeMultipartUpload);
+router.post('/api/video/multipart/abort',
+  videoController.abortMultipartUpload);
 
 export default router;

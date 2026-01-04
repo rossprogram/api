@@ -286,6 +286,17 @@ const ApplicationSchema = new Schema({
     type: Date,
   },
 
+  video: {
+    key: { type: String },
+    bucket: { type: String },
+    uploadId: { type: String },
+    status: { type: String },
+    etag: { type: String },
+    createdAt: { type: Date },
+    completedAt: { type: Date },
+    abortedAt: { type: Date },
+  },
+
 
 
 

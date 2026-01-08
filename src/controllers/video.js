@@ -8,9 +8,28 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-const { AWS_REGION, S3_VIDEO_BUCKET } = process.env;
+const { S3_VIDEO_BUCKET } = process.env;
+let s3Client;
 
-const s3 = new S3Client({ region: AWS_REGION });
+// this seems necessary and I don't know why!
+import { defaultProvider } from "@aws-sdk/credential-provider-node";
+
+function getRegion() {
+  const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION;
+  if (!region) {
+    throw new Error('Missing AWS region (set AWS_REGION or AWS_DEFAULT_REGION)');
+  }
+  return region;
+}
+
+function getS3Client() {
+  if (!s3Client) {
+    const credentials = defaultProvider();
+    s3Client = new S3Client({ region: getRegion() });
+  }
+
+  return s3Client;
+}
 
 function getBucket() {
   if (!S3_VIDEO_BUCKET) {
@@ -66,7 +85,7 @@ export async function createMultipartUpload(req, res, next) {
       ContentType: req.body.contentType || 'video/webm',
     });
 
-    const response = await s3.send(command);
+    const response = await getS3Client().send(command);
 
     req.application.video = {
       key,
@@ -111,7 +130,7 @@ export async function getMultipartPartUrl(req, res, next) {
       PartNumber: part,
     });
 
-    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    const url = await getSignedUrl(getS3Client(), command, { expiresIn: 3600 });
     res.json({ url });
   } catch (err) {
     next(err);
@@ -151,7 +170,7 @@ export async function completeMultipartUpload(req, res, next) {
       MultipartUpload: { Parts: orderedParts },
     });
 
-    const response = await s3.send(command);
+    const response = await getS3Client().send(command);
 
     req.application.video = {
       ...req.application.video,
@@ -198,7 +217,7 @@ export async function abortMultipartUpload(req, res, next) {
       UploadId: uploadId,
     });
 
-    await s3.send(command);
+    await getS3Client().send(command);
 
     req.application.video = {
       ...req.application.video,
@@ -241,7 +260,7 @@ export async function getVideo(req, res, next) {
       Key: key,
     });
 
-    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    const url = await getSignedUrl(getS3Client(), command, { expiresIn: 3600 });
     res.json({ url, bucket, key, expiresIn: 3600 });
   } catch (err) {
     next(err);

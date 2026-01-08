@@ -155,7 +155,7 @@ export function authorize(req, res, next) {
       res.cookie('token', token, { 
         maxAge: 604800000 * 32,       // 32 weeks in milliseconds
         httpOnly: true, 
-        secure: true,
+         secure: true,
         domain: '.rossprogram.org',  // ensures cookie is shared across subdomains
         sameSite: 'None',         // explicitly allow cross-site usage if needed
         path: '/',                // default path

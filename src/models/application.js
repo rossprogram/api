@@ -83,6 +83,11 @@ const ApplicationSchema = new Schema({
     trim: true,
   },
 
+  ncesSchoolId: {
+    type: String,
+    trim: true,
+  },
+
   schoolAddress: {
     type: String,
     trim: true,

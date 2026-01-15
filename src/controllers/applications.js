@@ -65,6 +65,7 @@ function redactApplication(user, application) {
     application.address = '██████████';
     application.parentAddress = '██████████';
     application.schoolName = '██████████';
+    application.ncesSchoolId = '██████████';
     application.schoolAddress = '██████████';
   }
 
